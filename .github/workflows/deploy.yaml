@@ -1,0 +1,46 @@
+name: CI
+#运行工作流名字
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+#运行工作流触发条件
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches-ignore:
+      - gh-pages
+  schedule:
+    # 秒 分 小时 日期 月份 星期 年（可选） 用空格隔开
+    # 5：30和 17：30 定时
+    - cron: '30 5,17 * * *'
+    # 周一和周四 5：30和 17：30
+    - cron: '30 5,17 * * 1,4'
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        run: |
+          git clone https://github.com/flutter/flutter.git --depth 1 -b beta _flutter
+          echo "${GITHUB_WORKSPACE}/_flutter/bin" >> ${GITHUB_PATH}
+
+      - name: Install
+        run: |
+          flutter config --enable-web
+          flutter pub get
+
+      - name: Build
+        run: flutter build web
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
