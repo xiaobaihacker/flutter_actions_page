@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'welcome xiaobai hacker update'),
+      home: const MyHomePage(title: 'flutter actions page xiaobai'),
     );
   }
 }
