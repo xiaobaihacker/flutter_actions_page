@@ -5,7 +5,7 @@ run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
 on: 
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches-ignore:
       - gh-pages
